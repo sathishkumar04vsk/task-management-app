@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'channels',
+    'tasks',
 ]
 
 MIDDLEWARE = [
