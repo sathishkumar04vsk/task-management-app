@@ -2,6 +2,7 @@ import { toast, type ToastOptions } from "sonner";
 
 export function useToast() {
   return {
-    toast: (options: ToastOptions) => toast(options),
+    toast: (message: string | React.ReactNode, options?: ToastOptions) =>
+      toast(message, options),
   };
 }
