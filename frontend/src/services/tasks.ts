@@ -15,8 +15,8 @@ export interface TaskInput {
   description: string;
   due_date: string;
   priority: string;
+  assigned_to_id?: number | null;
   status?: string;
-  assigned_to?: number | null;
 }
 
 export const getTasks = async (): Promise<Task[]> => {

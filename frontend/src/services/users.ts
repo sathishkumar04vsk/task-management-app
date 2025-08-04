@@ -7,7 +7,8 @@ export interface User {
   is_staff: boolean;
 }
 
-interface UserInput {
+export interface UserInput {
+  id?: number;
   username: string;
   email: string;
   password?: string;

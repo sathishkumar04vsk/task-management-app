@@ -1,34 +1,47 @@
-import {  useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card'
-import { useToast } from './ui/use-toast'
-import { useAuthStore } from '../store/auth'
-import { login, getCurrentUser } from '../services/auth'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "./ui/card";
+import { useToast } from "./ui/use-toast";
+import { Auth } from "../store/auth";
+import { login, getCurrentUser } from "../services/auth";
 
 export default function Login() {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const { setToken, setIsAdmin } = useAuthStore()
-  const navigate = useNavigate()
-  const { toast } = useToast()
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const { setToken, setUsername, setIsAdmin } = Auth;
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const { access } = await login(username, password)
-      setToken(access)
-      const user = await getCurrentUser(username)
-      
-      console.log(access)
-      setIsAdmin(user.is_staff)
-      navigate(user.is_staff ? '/users' : '/')
-      toast('Logged in successfully' ,{ title: 'Success', description: 'Logged in successfully' })
+      const { access, refresh } = await login(username, password);
+      setToken(access, refresh);
+      setUsername(username);
+      const user = await getCurrentUser(username);
+
+      console.log(user);
+      setIsAdmin(user.is_staff);
+
+      toast("Logged in successfully", {
+        success: { message: "Logged in successfully" },
+      });
+      setTimeout(() => navigate(user.is_staff ? "/users" : "/tasks"), 500);
     } catch (error) {
-      toast('Invalid credentials',{ title: 'Error', description: 'Invalid credentials', variant: 'destructive' })
+      console.error("Login failed:", error);
+      toast("Invalid credentials", {
+        error: { message: "", variant: "destructive" },
+      });
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
@@ -44,7 +57,7 @@ export default function Login() {
                 type="text"
                 placeholder="Username"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => setUserName(e.target.value)}
                 required
               />
             </div>
@@ -64,5 +77,5 @@ export default function Login() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

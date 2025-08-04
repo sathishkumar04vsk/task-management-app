@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from "axios";
-import { useAuthStore } from "../store/auth";
+import { Auth } from "../store/auth";
 
 const createApiClient = (): AxiosInstance => {
-  const { token } = useAuthStore.getState();
+  const token = Auth.getToken();
   const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     headers: {

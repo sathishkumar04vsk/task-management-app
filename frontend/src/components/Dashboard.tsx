@@ -1,76 +1,105 @@
-import { useState, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { useToast } from './ui/use-toast'
-import { useAuthStore } from '../store/auth'
-import ReconnectingWebSocket from 'reconnecting-websocket'
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { useToast } from "./ui/use-toast";
+import { Auth } from "../store/auth";
+import ReconnectingWebSocket from "reconnecting-websocket";
 
 interface Task {
-  id: number
-  title: string
-  description: string
-  due_date: string
-  priority: string
-  status: string
-  assigned_to: { id: number; username: string } | null
+  id: number;
+  title: string;
+  description: string;
+  due_date: string;
+  priority: string;
+  status: string;
+  assigned_to: { id: number; username: string } | null;
 }
 
 export default function Dashboard() {
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [newTask, setNewTask] = useState({ title: '', description: '', due_date: '', priority: 'MEDIUM' })
-  const [filters, setFilters] = useState({ priority: '', status: '', search: '' })
-  const { token } = useAuthStore()
-  const { toast } = useToast()
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [newTask, setNewTask] = useState({
+    title: "",
+    description: "",
+    due_date: "",
+    priority: "MEDIUM",
+  });
+  const [filters, setFilters] = useState({
+    priority: "",
+    status: "",
+    search: "",
+  });
+  const token = Auth.getToken();
+  const { toast } = useToast();
 
   const { data: fetchedTasks, refetch } = useQuery({
-    queryKey: ['tasks'],
+    queryKey: ["tasks"],
     queryFn: async () => {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/tasks/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      return response.data
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/tasks/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data;
     },
     enabled: !!token,
-  })
+  });
 
   useEffect(() => {
-    if (fetchedTasks) setTasks(fetchedTasks)
-  }, [fetchedTasks])
+    if (fetchedTasks) setTasks(fetchedTasks);
+  }, [fetchedTasks]);
 
   useEffect(() => {
-    const ws = new ReconnectingWebSocket(`ws://localhost:8000/ws/tasks/`)
+    const ws = new ReconnectingWebSocket(`ws://localhost:8000/ws/tasks/`);
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      if (data.type === 'task_update') {
-        refetch()
-        toast(`Task ${data.task_id} was ${data.action}`,{
+      const data = JSON.parse(event.data);
+      if (data.type === "task_update") {
+        refetch();
+        toast(`Task ${data.task_id} was ${data.action}`, {
           title: `Task ${data.action}`,
           description: `Task ${data.task_id} was ${data.action}`,
-        })
+        });
       }
-    }
-    return () => ws.close()
-  }, [refetch, toast])
+    };
+    return () => ws.close();
+  }, [refetch, toast]);
 
   const handleCreateTask = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/tasks/`,
-        newTask,
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      refetch()
-      setNewTask({ title: '', description: '', due_date: '', priority: 'MEDIUM' })
-      toast('Task created successfully',{ title: 'Success', description: 'Task created successfully' })
+      await axios.post(`${import.meta.env.VITE_API_URL}/tasks/`, newTask, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      refetch();
+      setNewTask({
+        title: "",
+        description: "",
+        due_date: "",
+        priority: "MEDIUM",
+      });
+      toast("Task created successfully", {
+        title: "Success",
+        description: "Task created successfully",
+      });
     } catch (error) {
-      toast('Failed to create task',{ title: 'Error', description: 'Failed to create task', variant: 'destructive' })
+      console.error("Failed to create task:", error);
+      toast("Failed to create task", {
+        title: "Error",
+        description: "Failed to create task",
+        variant: "destructive",
+      });
     }
-  }
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -83,21 +112,29 @@ export default function Dashboard() {
             <Input
               placeholder="Title"
               value={newTask.title}
-              onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+              onChange={(e) =>
+                setNewTask({ ...newTask, title: e.target.value })
+              }
             />
             <Input
               placeholder="Description"
               value={newTask.description}
-              onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+              onChange={(e) =>
+                setNewTask({ ...newTask, description: e.target.value })
+              }
             />
             <Input
               type="datetime-local"
               value={newTask.due_date}
-              onChange={(e) => setNewTask({ ...newTask, due_date: e.target.value })}
+              onChange={(e) =>
+                setNewTask({ ...newTask, due_date: e.target.value })
+              }
             />
             <Select
               value={newTask.priority}
-              onValueChange={(value) => setNewTask({ ...newTask, priority: value })}
+              onValueChange={(value) =>
+                setNewTask({ ...newTask, priority: value })
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Priority" />
@@ -147,15 +184,18 @@ export default function Dashboard() {
             <SelectItem value="COMPLETED">Completed</SelectItem>
           </SelectContent>
         </Select>
-        <Button type="button" onClick={refetch}>Apply Filters</Button>
+        <Button type="button" onClick={() => refetch()}>
+          Apply Filters
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {tasks
-          .filter((task) =>
-            task.title.toLowerCase().includes(filters.search.toLowerCase()) &&
-            (!filters.priority || task.priority === filters.priority) &&
-            (!filters.status || task.status === filters.status)
+          .filter(
+            (task) =>
+              task.title.toLowerCase().includes(filters.search.toLowerCase()) &&
+              (!filters.priority || task.priority === filters.priority) &&
+              (!filters.status || task.status === filters.status)
           )
           .map((task) => (
             <Card key={task.id}>
@@ -167,11 +207,11 @@ export default function Dashboard() {
                 <p>Due: {new Date(task.due_date).toLocaleString()}</p>
                 <p>Priority: {task.priority}</p>
                 <p>Status: {task.status}</p>
-                <p>Assigned to: {task.assigned_to?.username || 'Unassigned'}</p>
+                <p>Assigned to: {task.assigned_to?.username || "Unassigned"}</p>
               </CardContent>
             </Card>
           ))}
       </div>
     </div>
-  )
+  );
 }
