@@ -50,6 +50,9 @@ INSTALLED_APPS = [
     'tasks',
 ]
 
+ASGI_APPLICATION = "apiserver.asgi.application"
+
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',

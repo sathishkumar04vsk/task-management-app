@@ -1,5 +1,6 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from asgiref.sync import sync_to_async
 from .models import Task
 from .serializers import TaskSerializer
 
@@ -15,13 +16,11 @@ class TaskConsumer(AsyncWebsocketConsumer):
         task_id = event['task_id']
         action = event['action']
         task_data = None
-        
+
         if action != 'deleted':
-            try:
-                task = Task.objects.get(id=task_id)
-                task_data = TaskSerializer(task).data
-            except Task.DoesNotExist:
-                task_data = None
+            task = await self.get_task(task_id)
+            if task:
+                task_data = await self.serialize_task(task)
 
         await self.send(text_data=json.dumps({
             'type': 'task_update',
@@ -29,3 +28,14 @@ class TaskConsumer(AsyncWebsocketConsumer):
             'task_id': task_id,
             'task': task_data
         }))
+
+    @sync_to_async
+    def get_task(self, task_id):
+        try:
+            return Task.objects.get(id=task_id)
+        except Task.DoesNotExist:
+            return None
+
+    @sync_to_async
+    def serialize_task(self, task):
+        return TaskSerializer(task).data
