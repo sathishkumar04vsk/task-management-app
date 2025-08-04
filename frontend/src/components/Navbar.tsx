@@ -25,7 +25,7 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
 
   const handleLogout = () => {
     clear();
-    setTimeout(() => navigate("/login"), 1000);
+    setTimeout(() => (window.location.href = "/login"), 1000);
   };
 
   return (

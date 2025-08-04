@@ -121,7 +121,7 @@ export default function TaskManagement() {
   });
 
   useEffect(() => {
-    const ws = new ReconnectingWebSocket(`ws://backend:8000/ws/tasks/`);
+    const ws = new ReconnectingWebSocket(`ws://localhost:8000/ws/tasks/`);
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "task_update") {

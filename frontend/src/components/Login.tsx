@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import {
@@ -17,7 +16,6 @@ export default function Login() {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const { setToken, setUsername, setIsAdmin } = Auth;
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -34,7 +32,10 @@ export default function Login() {
       toast("Logged in successfully", {
         success: { message: "Logged in successfully" },
       });
-      setTimeout(() => navigate(user.is_staff ? "/users" : "/tasks"), 500);
+      setTimeout(
+        () => (window.location.href = user.is_staff ? "/users" : "/tasks"),
+        1000
+      );
     } catch (error) {
       console.error("Login failed:", error);
       toast("Invalid credentials", {
