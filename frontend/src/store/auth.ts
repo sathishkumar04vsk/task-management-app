@@ -1,5 +1,3 @@
-// utils/auth.ts
-
 const TOKEN_KEY = "auth-token";
 const REFRESH_TOKEN_KEY = "refresh-token";
 const USERNAME_KEY = "username";
