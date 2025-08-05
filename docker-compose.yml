@@ -5,7 +5,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     command: >
-      sh -c "python manage.py migrate &&
+      sh -c "python manage.py makemigrations && python manage.py migrate &&
              daphne apiserver.asgi:application -b 0.0.0.0"
     volumes:
       - ./backend:/app
