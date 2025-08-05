@@ -33,7 +33,6 @@ import {
   updateUser,
   deleteUser,
   User,
-  UserInput,
 } from "../services/users";
 import { Pencil, Trash2 } from "lucide-react";
 
@@ -42,9 +41,9 @@ export default function UserManagement() {
     username: "",
     email: "",
     password: "",
-    is_staff: "false",
+    role_id: "1",
   });
-  const [editingUser, setEditingUser] = useState<UserInput | null>(null);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
   const token = Auth.getToken;
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -55,11 +54,21 @@ export default function UserManagement() {
     enabled: !!token,
   });
 
+  const { data: roles } = useQuery({
+    queryKey: ["roles"],
+    queryFn: async () => {
+      const api = (await import("../services/api")).default();
+      const response = await api.get("/roles/");
+      return response.data;
+    },
+    enabled: !!token,
+  });
+
   const createUserMutation = useMutation({
     mutationFn: createUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      setNewUser({ username: "", email: "", password: "", is_staff: "false" });
+      setNewUser({ username: "", email: "", password: "", role_id: "1" });
       toast("User created successfully", { title: "Success" });
     },
     onError: () => {
@@ -71,7 +80,7 @@ export default function UserManagement() {
   });
 
   const updateUserMutation = useMutation({
-    mutationFn: ({ id, userData }: { id: number; userData: UserInput }) =>
+    mutationFn: ({ id, userData }: { id: number; userData: User }) =>
       updateUser(id, userData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
@@ -106,7 +115,7 @@ export default function UserManagement() {
       username: newUser.username,
       email: newUser.email,
       password: newUser.password,
-      is_staff: newUser.is_staff === "true",
+      role_id: newUser.role_id,
     });
   };
 
@@ -119,7 +128,7 @@ export default function UserManagement() {
           username: editingUser.username,
           email: editingUser.email,
           password: editingUser.password || "",
-          is_staff: editingUser.is_staff,
+          role_id: editingUser.role?.id,
         },
       });
     }
@@ -160,22 +169,23 @@ export default function UserManagement() {
                 }
                 required
               />
-              {newUser?.is_staff && (
-                <Select
-                  value={newUser.is_staff}
-                  onValueChange={(value) =>
-                    setNewUser({ ...newUser, is_staff: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="false">Regular User</SelectItem>
-                    <SelectItem value="true">Admin</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
+              <Select
+                value={newUser.role_id}
+                onValueChange={(value) =>
+                  setNewUser({ ...newUser, role_id: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  {roles?.map((role: { id: number; name: string }) => (
+                    <SelectItem key={role.id} value={role.id.toString()}>
+                      {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <Button type="submit" disabled={createUserMutation.isPending}>
               Create User
@@ -207,7 +217,10 @@ export default function UserManagement() {
                     <TableCell>{user.username}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
-                      {user.is_staff ? "Admin" : "Regular User"}
+                      {user.role?.name
+                        ? user.role.name.charAt(0).toUpperCase() +
+                          user.role.name.slice(1)
+                        : "No Role"}
                     </TableCell>
                     <TableCell>
                       <Dialog>
@@ -220,11 +233,12 @@ export default function UserManagement() {
                             <Pencil className="h-4 w-4 mr-2" /> Edit
                           </Button>
                         </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Edit User</DialogTitle>
-                          </DialogHeader>
-                          {editingUser && (
+                        {editingUser && (
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Edit User</DialogTitle>
+                            </DialogHeader>
+
                             <form
                               onSubmit={handleUpdateUser}
                               className="space-y-4"
@@ -255,7 +269,7 @@ export default function UserManagement() {
                               <Input
                                 placeholder="New Password (optional)"
                                 type="password"
-                                value={editingUser?.password || ""}
+                                value={editingUser.password || ""}
                                 onChange={(e) =>
                                   setEditingUser({
                                     ...editingUser,
@@ -264,11 +278,18 @@ export default function UserManagement() {
                                 }
                               />
                               <Select
-                                value={editingUser.is_staff.toString()}
+                                value={editingUser.role?.id?.toString() || ""}
                                 onValueChange={(value) =>
                                   setEditingUser({
                                     ...editingUser,
-                                    is_staff: value === "true",
+                                    role: {
+                                      id: value,
+                                      name:
+                                        roles?.find(
+                                          (r: { id: number; name: string }) =>
+                                            r.id === parseInt(value)
+                                        )?.name || "",
+                                    },
                                   })
                                 }
                               >
@@ -276,10 +297,17 @@ export default function UserManagement() {
                                   <SelectValue placeholder="Role" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="false">
-                                    Regular User
-                                  </SelectItem>
-                                  <SelectItem value="true">Admin</SelectItem>
+                                  {roles?.map(
+                                    (role: { id: number; name: string }) => (
+                                      <SelectItem
+                                        key={role.id}
+                                        value={role.id.toString()}
+                                      >
+                                        {role.name.charAt(0).toUpperCase() +
+                                          role.name.slice(1)}
+                                      </SelectItem>
+                                    )
+                                  )}
                                 </SelectContent>
                               </Select>
                               <Button
@@ -289,14 +317,14 @@ export default function UserManagement() {
                                 Update User
                               </Button>
                             </form>
-                          )}
-                        </DialogContent>
+                          </DialogContent>
+                        )}
                       </Dialog>
                       <Button
                         variant="destructive"
                         size="sm"
                         className="ml-2"
-                        onClick={() => deleteUserMutation.mutate(user.id)}
+                        onClick={() => deleteUserMutation.mutate(user?.id || 0)}
                         disabled={deleteUserMutation.isPending}
                       >
                         <Trash2 className="h-4 w-4 mr-2" /> Delete

@@ -1,17 +1,14 @@
 const TOKEN_KEY = "auth-token";
 const REFRESH_TOKEN_KEY = "refresh-token";
 const USERNAME_KEY = "username";
-const IS_ADMIN_KEY = "is-admin";
+const IS_ADMIN_KEY = "role";
 
 export const Auth = {
   // Getters
   getToken: (): string | null => localStorage.getItem(TOKEN_KEY),
   getRefreshToken: (): string | null => localStorage.getItem(REFRESH_TOKEN_KEY),
   getUsername: (): string | null => localStorage.getItem(USERNAME_KEY),
-  isAdmin: (): boolean => {
-    const value = localStorage.getItem(IS_ADMIN_KEY);
-    return value === "true" ? true : false;
-  },
+  getRole: (): string | null => localStorage.getItem(IS_ADMIN_KEY),
 
   // Setters
   setToken: (token: string | null, refreshToken: string | null) => {
@@ -28,9 +25,8 @@ export const Auth = {
     else localStorage.removeItem(USERNAME_KEY);
   },
 
-  setIsAdmin: (isAdmin: boolean | null) => {
-    if (isAdmin !== null)
-      localStorage.setItem(IS_ADMIN_KEY, isAdmin ? "true" : "false");
+  setRole: (role: string | null) => {
+    if (role) localStorage.setItem(IS_ADMIN_KEY, role);
     else localStorage.removeItem(IS_ADMIN_KEY);
   },
 

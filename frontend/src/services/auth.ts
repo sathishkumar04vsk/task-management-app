@@ -9,7 +9,7 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  is_staff: boolean;
+  role: object;
 }
 
 export const login = async (
@@ -34,10 +34,8 @@ export const refreshToken = async (
   return response.data;
 };
 
-export const getCurrentUser = async (username: string): Promise<User> => {
+export const getCurrentUser = async (): Promise<User> => {
   const api = createApiClient();
-  const response = await api.get<User[]>("/users/");
-  const user = response.data.find((u) => u.username === username);
-  if (!user) throw new Error("User not found");
-  return user;
+  const response = await api.get<User>("/current-user/");
+  return response.data;
 };

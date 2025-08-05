@@ -15,7 +15,7 @@ import { login, getCurrentUser } from "../services/auth";
 export default function Login() {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const { setToken, setUsername, setIsAdmin } = Auth;
+  const { setToken, setUsername, setRole } = Auth;
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -24,16 +24,18 @@ export default function Login() {
       const { access, refresh } = await login(username, password);
       setToken(access, refresh);
       setUsername(username);
-      const user = await getCurrentUser(username);
+      const user = await getCurrentUser();
 
       console.log(user);
-      setIsAdmin(user.is_staff);
+      setRole(user?.role?.name);
 
       toast("Logged in successfully", {
         success: { message: "Logged in successfully" },
       });
       setTimeout(
-        () => (window.location.href = user.is_staff ? "/users" : "/tasks"),
+        () =>
+          (window.location.href =
+            user.role?.name === "admin" ? "/users" : "/tasks"),
         1000
       );
     } catch (error) {

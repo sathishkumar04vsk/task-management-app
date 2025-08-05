@@ -13,7 +13,7 @@ import { Navigate } from "react-router-dom";
 const queryClient = new QueryClient();
 
 function App() {
-  const { isAdmin } = Auth;
+  const role = Auth.getRole();
   const token = Auth.getToken();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -38,7 +38,11 @@ function App() {
                   <Route
                     path="/users"
                     element={
-                      isAdmin() ? <UserManagement /> : <Navigate to="/tasks" />
+                      role === "admin" ? (
+                        <UserManagement />
+                      ) : (
+                        <Navigate to="/tasks" />
+                      )
                     }
                   />
                   <Route

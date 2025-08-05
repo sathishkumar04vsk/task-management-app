@@ -18,7 +18,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ toggleSidebar }: NavbarProps) {
-  const { isAdmin, clear } = Auth;
+  const { getRole, clear } = Auth;
   const username = Auth.getUsername();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -57,8 +57,8 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
             <DropdownMenuLabel>
               <div className="flex flex-col">
                 <span>{username || "User"}</span>
-                <span className="text-xs text-gray-500">
-                  {isAdmin() ? "Admin" : "Regular User"}
+                <span className="text-xs capitalize text-gray-500">
+                  {getRole()}
                 </span>
               </div>
             </DropdownMenuLabel>

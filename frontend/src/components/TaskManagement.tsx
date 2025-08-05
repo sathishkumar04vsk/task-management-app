@@ -225,7 +225,10 @@ export default function TaskManagement() {
                 <SelectContent>
                   <SelectItem value="none">Unassigned</SelectItem>
                   {users?.map((user) => (
-                    <SelectItem key={user.id} value={user.id.toString()}>
+                    <SelectItem
+                      key={user.id}
+                      value={user?.id?.toString() || "none"}
+                    >
                       {user.username}
                     </SelectItem>
                   ))}
@@ -339,11 +342,12 @@ export default function TaskManagement() {
                             <Pencil className="h-4 w-4 mr-2" /> Edit
                           </Button>
                         </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Edit Task</DialogTitle>
-                          </DialogHeader>
-                          {editingTask && (
+                        {editingTask && (
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Edit Task</DialogTitle>
+                            </DialogHeader>
+
                             <form
                               onSubmit={handleUpdateTask}
                               className="space-y-4"
@@ -371,7 +375,7 @@ export default function TaskManagement() {
                               />
                               <Input
                                 type="datetime-local"
-                                value={editingTask.due_date}
+                                value={editingTask.due_date.slice(0, 16)}
                                 onChange={(e) =>
                                   setEditingTask({
                                     ...editingTask,
@@ -442,12 +446,13 @@ export default function TaskManagement() {
                                 </SelectTrigger>
                                 <SelectContent>
                                   <SelectItem value="none">
-                                    Unassigned
+                                    {editingTask.assigned_to?.username ||
+                                      "Unassigned"}
                                   </SelectItem>
                                   {users?.map((user) => (
                                     <SelectItem
                                       key={user.id}
-                                      value={user.id.toString()}
+                                      value={user?.id?.toString() || "none"}
                                     >
                                       {user.username}
                                     </SelectItem>
@@ -461,8 +466,8 @@ export default function TaskManagement() {
                                 Update Task
                               </Button>
                             </form>
-                          )}
-                        </DialogContent>
+                          </DialogContent>
+                        )}
                       </Dialog>
                       <Button
                         variant="destructive"

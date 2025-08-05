@@ -10,7 +10,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
-  const { isAdmin } = Auth;
+  const { getRole } = Auth;
 
   return (
     <Card
@@ -52,7 +52,7 @@ export default function Sidebar({ isCollapsed, toggleSidebar }: SidebarProps) {
               {!isCollapsed && <span>Tasks</span>}
             </NavLink>
           </li>
-          {isAdmin() && (
+          {getRole() === "admin" && (
             <li>
               <NavLink
                 to="/users"
