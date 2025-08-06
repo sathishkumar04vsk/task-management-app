@@ -5,6 +5,7 @@ from .serializers import UserSerializer, TaskSerializer, RoleSerializer
 from .permissions import RoleBasedPermission
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from rest_framework import status
 import json
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -19,6 +20,43 @@ def notify_task_update(task_id, action):
             'action': action,
         }
     )
+
+class InitializeSuperuserView(APIView):
+    authentication_classes = []  # No authentication required
+    permission_classes = []     # No permissions required
+
+    def post(self, request):
+        # Check if superuser already exists to prevent abuse
+        if User.objects.filter(is_superuser=True).exists():
+            return Response(
+                {"detail": "Superuser already exists"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Create roles if they don't exist
+        roles = ['admin', 'task manager', 'user']
+        for role_name in roles:
+            Role.objects.get_or_create(name=role_name)
+
+        # Create superuser
+        superuser_data = {
+            "username": request.data.get("username", "admin"),
+            "email": request.data.get("email", "admin@example.com"),
+            "password": request.data.get("password", "adminpassword"),
+            "role_id": Role.objects.get(name="admin").id,
+            "is_active": True,
+            "is_staff": True,
+            "is_superuser": True
+        }
+
+        serializer = UserSerializer(data=superuser_data)
+        if serializer.is_valid():
+            serializer.save()  # Uses UserSerializer.create with set_password
+            return Response(
+                {"detail": "Superuser and roles initialized successfully"},
+                status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]

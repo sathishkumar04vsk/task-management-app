@@ -40,24 +40,24 @@ This is a simple task management application built with React, TypeScript, and T
         docker-compose up
         ```
 
-    create a superuser:
+      - Initialize Superuser Account:
 
-    - Open a new terminal and run the following command to create a superuser:
-      ```bash
-      docker-compose exec backend python manage.py createsuperuser --username sathishkumar --email sathishkumar@example.com
-      ```
-      Enter password: zaqwer321!
-      ```bash
-      Enter password: zaqwer321!
-      ```
-      ```bash
-      Enter password (again): zaqwer321!
-      ```
+        After the services are up, you need to create a superuser account for the Django admin interface. You can do this by running the following command in a separate terminal:
+
+        ```bash
+        docker-compose exec backend python manage.py createsuperuser
+        ```
+
+        using curl inintialize the superuser account:
+
+        ```bash
+        curl -X POST http://localhost:8000/api/initialize-superuser/ -H "Content-Type: application/json" -d '{"username": "admin", "password": "zaqwer321!", "email": "admin@example.com"}'
+        ```
 
 go to `http://localhost:3000` in your browser to access the application.
 login with the credentials:
 
-- Username: `sathishkumar`
+- Username: `admin`
 - Password: `zaqwer321!`
 
 # Architecture Overview

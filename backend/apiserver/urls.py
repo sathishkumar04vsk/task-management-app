@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from tasks.views import TaskViewSet ,UserViewSet, RoleViewSet, CurrentUserView  
+from tasks.views import TaskViewSet ,UserViewSet, RoleViewSet, CurrentUserView, InitializeSuperuserView 
 
 router = DefaultRouter()
 router.register(r'tasks', TaskViewSet)
@@ -31,4 +31,5 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/current-user/', CurrentUserView.as_view(), name='current-user'),
+    path('api/initialize-superuser/', InitializeSuperuserView.as_view(), name='initialize-superuser'),
 ]
