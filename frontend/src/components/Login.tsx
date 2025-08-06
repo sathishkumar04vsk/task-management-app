@@ -11,11 +11,13 @@ import {
 import { useToast } from "./ui/use-toast";
 import { Auth } from "../store/auth";
 import { login, getCurrentUser } from "../services/auth";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const { setToken, setUsername, setRole } = Auth;
+  const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -64,14 +66,27 @@ export default function Login() {
                 required
               />
             </div>
-            <div className="space-y-2">
+            <div className="relative">
               <Input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </Button>
             </div>
             <Button type="submit" className="w-full">
               Sign In

@@ -34,7 +34,7 @@ import {
   deleteUser,
   User,
 } from "../services/users";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Eye, EyeOff } from "lucide-react";
 
 export default function UserManagement() {
   const [newUser, setNewUser] = useState({
@@ -43,6 +43,7 @@ export default function UserManagement() {
     password: "",
     role_id: "1",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const token = Auth.getToken;
   const { toast } = useToast();
@@ -160,15 +161,30 @@ export default function UserManagement() {
                 }
                 required
               />
-              <Input
-                placeholder="Password"
-                type="password"
-                value={newUser.password}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, password: e.target.value })
-                }
-                required
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  value={newUser.password}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, password: e.target.value })
+                  }
+                  required
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
               <Select
                 value={newUser.role_id}
                 onValueChange={(value) =>
