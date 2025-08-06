@@ -25,7 +25,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { useToast } from "./ui/use-toast";
 import { Auth } from "../store/auth";
 import {
   getUsers,
@@ -35,6 +34,7 @@ import {
   User,
 } from "../services/users";
 import { Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 export default function UserManagement() {
   const [newUser, setNewUser] = useState({
@@ -46,7 +46,7 @@ export default function UserManagement() {
   const [showPassword, setShowPassword] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const token = Auth.getToken;
-  const { toast } = useToast();
+
   const queryClient = useQueryClient();
 
   const { data: users, isLoading } = useQuery({
@@ -70,12 +70,17 @@ export default function UserManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setNewUser({ username: "", email: "", password: "", role_id: "1" });
-      toast("User created successfully", { title: "Success" });
+      toast.success("User created successfully", {
+        description: "User created successfully",
+      });
     },
     onError: () => {
-      toast("Failed to create user", {
-        title: "Error",
-        variant: "destructive",
+      toast.error("Failed to create user", {
+        description: "Failed to create user",
+        action: {
+          label: "undo",
+          onClick: () => console.log("undo"),
+        },
       });
     },
   });
@@ -86,12 +91,17 @@ export default function UserManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setEditingUser(null);
-      toast("User updated successfully", { title: "Success" });
+      toast.success("User updated successfully", {
+        description: "User updated successfully",
+      });
     },
     onError: () => {
-      toast("Failed to update user", {
-        title: "Error",
-        variant: "destructive",
+      toast.error("Failed to update user", {
+        description: "Failed to update user",
+        action: {
+          label: "undo",
+          onClick: () => console.log("undo"),
+        },
       });
     },
   });
@@ -100,12 +110,17 @@ export default function UserManagement() {
     mutationFn: deleteUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      toast("User deleted successfully", { title: "Success" });
+      toast.success("User deleted successfully", {
+        description: "User deleted successfully",
+      });
     },
     onError: () => {
-      toast("Failed to delete user", {
-        title: "Error",
-        variant: "destructive",
+      toast.error("Failed to delete user", {
+        description: "Failed to delete user",
+        action: {
+          label: "undo",
+          onClick: () => console.log("undo"),
+        },
       });
     },
   });

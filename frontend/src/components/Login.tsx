@@ -8,17 +8,17 @@ import {
   CardTitle,
   CardDescription,
 } from "./ui/card";
-import { useToast } from "./ui/use-toast";
+
 import { Auth } from "../store/auth";
 import { login, getCurrentUser } from "../services/auth";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Login() {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const { setToken, setUsername, setRole } = Auth;
   const [showPassword, setShowPassword] = useState(false);
-  const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,8 +31,12 @@ export default function Login() {
       console.log(user);
       setRole(user?.role?.name);
 
-      toast("Logged in successfully", {
-        success: { message: "Logged in successfully" },
+      toast.success("Logged in successfully", {
+        description: "Logged in successfully",
+        action: {
+          label: "undo",
+          onClick: () => console.log("undo"),
+        },
       });
       setTimeout(
         () =>
@@ -42,8 +46,12 @@ export default function Login() {
       );
     } catch (error) {
       console.error("Login failed:", error);
-      toast("Invalid credentials", {
-        error: { message: "", variant: "destructive" },
+      toast.error("Invalid credentials", {
+        description: "Invalid credentials",
+        action: {
+          label: "undo",
+          onClick: () => console.log("undo"),
+        },
       });
     }
   };

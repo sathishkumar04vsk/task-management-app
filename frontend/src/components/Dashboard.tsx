@@ -11,9 +11,9 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { useToast } from "./ui/use-toast";
 import { Auth } from "../store/auth";
 import ReconnectingWebSocket from "reconnecting-websocket";
+import { toast } from "sonner";
 
 interface Task {
   id: number;
@@ -39,7 +39,6 @@ export default function Dashboard() {
     search: "",
   });
   const token = Auth.getToken();
-  const { toast } = useToast();
 
   const { data: fetchedTasks, refetch } = useQuery({
     queryKey: ["tasks"],
@@ -65,14 +64,17 @@ export default function Dashboard() {
       const data = JSON.parse(event.data);
       if (data.type === "task_update") {
         refetch();
-        toast(`Task ${data.task_id} was ${data.action}`, {
-          title: `Task ${data.action}`,
+        toast.success(`Task ${data.task_id} was ${data.action}`, {
           description: `Task ${data.task_id} was ${data.action}`,
+          action: {
+            label: "undo",
+            onClick: () => console.log("undo"),
+          },
         });
       }
     };
     return () => ws.close();
-  }, [refetch, toast]);
+  }, [refetch]);
 
   const handleCreateTask = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,16 +89,21 @@ export default function Dashboard() {
         due_date: "",
         priority: "MEDIUM",
       });
-      toast("Task created successfully", {
-        title: "Success",
+      toast.success("Task created successfully", {
         description: "Task created successfully",
+        action: {
+          label: "undo",
+          onClick: () => console.log("undo"),
+        },
       });
     } catch (error) {
       console.error("Failed to create task:", error);
-      toast("Failed to create task", {
-        title: "Error",
+      toast.error("Failed to create task", {
         description: "Failed to create task",
-        variant: "destructive",
+        action: {
+          label: "undo",
+          onClick: () => console.log("undo"),
+        },
       });
     }
   };

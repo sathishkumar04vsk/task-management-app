@@ -25,7 +25,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { useToast } from "./ui/use-toast";
 import { Auth } from "../store/auth";
 import {
   getTasks,
@@ -38,6 +37,7 @@ import {
 import { getUsers } from "../services/users";
 import { Pencil, Trash2 } from "lucide-react";
 import ReconnectingWebSocket from "reconnecting-websocket";
+import { toast } from "sonner";
 
 export default function TaskManagement() {
   const [newTask, setNewTask] = useState<TaskInput>({
@@ -54,7 +54,6 @@ export default function TaskManagement() {
     search: "",
   });
   const token = Auth.getToken();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data: tasks, isLoading: tasksLoading } = useQuery({
@@ -80,12 +79,21 @@ export default function TaskManagement() {
         priority: "MEDIUM",
         assigned_to_id: null,
       });
-      toast("Task created successfully", { title: "Success" });
+      toast.success("Task created successfully", {
+        description: "Task created successfully",
+        action: {
+          label: "undo",
+          onClick: () => console.log("undo"),
+        },
+      });
     },
     onError: () => {
-      toast("Failed to create task", {
-        title: "Error",
-        variant: "destructive",
+      toast.error("Failed to create task", {
+        description: "Failed to create task",
+        action: {
+          label: "undo",
+          onClick: () => console.log("undo"),
+        },
       });
     },
   });
@@ -96,12 +104,17 @@ export default function TaskManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
       setEditingTask(null);
-      toast("Task updated successfully", { title: "Success" });
+      toast.success("Task updated successfully", {
+        description: "Task updated successfully",
+      });
     },
     onError: () => {
-      toast("Failed to update task", {
-        title: "Error",
-        variant: "destructive",
+      toast.error("Failed to update task", {
+        description: "Failed to update task",
+        action: {
+          label: "undo",
+          onClick: () => console.log("undo"),
+        },
       });
     },
   });
@@ -110,12 +123,21 @@ export default function TaskManagement() {
     mutationFn: deleteTask,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
-      toast("Task deleted successfully", { title: "Success" });
+      toast.success("Task deleted successfully", {
+        description: "Task deleted successfully",
+        action: {
+          label: "undo",
+          onClick: () => console.log("undo"),
+        },
+      });
     },
     onError: () => {
-      toast("Failed to delete task", {
-        title: "Error",
-        variant: "destructive",
+      toast.error("Failed to delete task", {
+        description: "Failed to delete task",
+        action: {
+          label: "undo",
+          onClick: () => console.log("undo"),
+        },
       });
     },
   });
@@ -126,13 +148,17 @@ export default function TaskManagement() {
       const data = JSON.parse(event.data);
       if (data.type === "task_update") {
         queryClient.invalidateQueries({ queryKey: ["tasks"] });
-        toast(`Task ${data.task_id} was ${data.action}`, {
-          title: `Task ${data.action}`,
+        toast.success(`Task ${data.task_id} was ${data.action}`, {
+          description: `Task ${data.task_id} was ${data.action}`,
+          action: {
+            label: "undo",
+            onClick: () => console.log("undo"),
+          },
         });
       }
     };
     return () => ws.close();
-  }, [queryClient, toast]);
+  }, [queryClient]);
 
   const handleCreateTask = (e: React.FormEvent) => {
     e.preventDefault();
