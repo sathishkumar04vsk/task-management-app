@@ -88,12 +88,15 @@ some screenshots of the task manager application:
 
 ## Login Screen
 
+login screen allows users to authenticate themselves before accessing the application.
 ![Login Screen](./frontend/src/assets/login.png)
 
 ## Task List
 
+list screen displays all tasks, allowing users to view and manage their tasks.
 ![Task List](./frontend/src/assets/task-management.png)
 
 ## User Management
 
+user management screen allows admins to create, update, and delete user accounts.
 ![User Management](./frontend/src/assets/user-management.png)
