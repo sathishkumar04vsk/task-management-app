@@ -32,10 +32,10 @@ This is a simple task management application built with React, TypeScript, and T
           docker-compose build
           ```
         - Start the services:
-          `bash
+          ```bash
+          docker-compose up
+          ```
 
-    docker-compose up
-    `
     create a superuser:
 
           ```bash
@@ -75,3 +75,19 @@ PostgreSQL stores User, Role, and Task data. Users are saved with hashed passwor
 # Flow Diagram
 
 ![Flow Diagram](./frontend/public/task_management_flow_chart.svg)
+
+# Task Manager Screenshots
+
+some screenshots of the task manager application:
+
+## Login Screen
+
+![Login Screen](./frontend/src/assets/login.png)
+
+## Task List
+
+![Task List](./frontend/src/assets/task-management.png)
+
+## User Management
+
+![User Management](./frontend/src/assets/user-management.png)
