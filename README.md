@@ -26,23 +26,52 @@ This is a simple task management application built with React, TypeScript, and T
     ```
 2.  Docker setup:
 
-    - Ensure Docker is installed and running.
-    - Build the Docker images:
-      ```bash
-      docker-compose build
-      ```
-    - Start the services:
-      `bash
-docker-compose up
-`
-      create a superuser:
+        - Ensure Docker is installed and running.
+        - Build the Docker images:
+          ```bash
+          docker-compose build
+          ```
+        - Start the services:
+          `bash
 
-      ```bash
-      docker-compose exec backend python manage.py createsuperuser --username sathishkumar --email sathishkumar@example.com --password zaqwer321!
-      ```
+    docker-compose up
+    `
+    create a superuser:
+
+          ```bash
+          docker-compose exec backend python manage.py createsuperuser --username sathishkumar --email sathishkumar@example.com
+          ```
+          ```bash
+          Enter password: zaqwer321!
+          ```
+          ```bash
+          Enter password (again): zaqwer321!
+          ```
 
 go to `http://localhost:3000` in your browser to access the application.
 login with the credentials:
 
 - Username: `sathishkumar`
 - Password: `zaqwer321!`
+
+# Architecture Overview
+
+## Frontend (React TypeScript)
+
+The React frontend (http://localhost:3000) uses Login.tsx to authenticate users, UserManagement.tsx for admin user creation, and TaskManagement.tsx for task management. zustand stores tokens/role, and @tanstack/react-query handles API calls to /api/users/ and /api/tasks/. The UI, built with shadcn/ui and Tailwind CSS, connects to WebSocket (ws://backend:8000/ws/tasks/) for real-time task updates.
+
+## Backend (Django DRF)
+
+The Django backend with DRF provides REST APIs: /api/auth/token/ for JWT login, /api/users/ for user CRUD (admin-only), and /api/tasks/ for task CRUD. Role-based permissions ensure admins manage users, admins/task managers edit tasks, and users view assigned tasks. Data is stored in PostgreSQL, and WebSocket notifications are sent via Redis.
+
+## Redis (Channels)
+
+Redis, configured as the channel layer (CHANNEL_LAYERS), supports WebSocket communication. The TaskConsumer in consumers.py handles connections at ws://backend:8000/ws/tasks/, sending task update messages to the frontend when tasks are created, updated, or deleted.
+
+## Database (PostgreSQL)
+
+PostgreSQL stores User, Role, and Task data. Users are saved with hashed passwords (pbkdf2_sha256), roles define access (admin, task manager, user), and tasks link to users. It supports authentication and role-based task filtering.
+
+# Flow Diagram
+
+![Flow Diagram](./frontend/public/task_management_flow_chart.svg)
