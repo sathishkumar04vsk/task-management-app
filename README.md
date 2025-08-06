@@ -13,8 +13,11 @@ This is a simple task management application built with React, TypeScript, and T
 - React
 - TypeScript
 - Tailwind CSS
-- Axios for API requests
+- Axios & React Query for API requests
 - Django REST Framework for the backend
+- Django Channels for WebSocket support
+- Redis for real-time updates
+- Docker for containerization
 - PostgreSQL for the database
 
 ## Setup Instructions
