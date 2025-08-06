@@ -64,7 +64,7 @@ login with the credentials:
 
 ## Frontend (React TypeScript)
 
-The React frontend (http://localhost:3000) uses Login.tsx to authenticate users, UserManagement.tsx for admin user creation, and TaskManagement.tsx for task management. zustand stores tokens/role, and @tanstack/react-query handles API calls to /api/users/ and /api/tasks/. The UI, built with shadcn/ui and Tailwind CSS, connects to WebSocket (ws://backend:8000/ws/tasks/) for real-time task updates.
+The React frontend (http://localhost:3000) uses Login.tsx to authenticate users, UserManagement.tsx for admin user creation, and TaskManagement.tsx for task management. localstorage tokens/role, and @tanstack/react-query handles API calls to /api/users/ and /api/tasks/. The UI, built with shadcn/ui and Tailwind CSS, connects to WebSocket (ws://backend:8000/ws/tasks/) for real-time task updates.
 
 ## Backend (Django DRF)
 
