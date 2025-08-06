@@ -26,27 +26,33 @@ This is a simple task management application built with React, TypeScript, and T
     ```
 2.  Docker setup:
 
-        - Ensure Docker is installed and running.
-        - Build the Docker images:
-          ```bash
-          docker-compose build
-          ```
-        - Start the services:
-          ```bash
-          docker-compose up
-          ```
+    - Ensure Docker is installed and running.
+
+      - Build the Docker images:
+
+        ```bash
+        docker-compose build
+        ```
+
+      - Start the services:
+
+        ```bash
+        docker-compose up
+        ```
 
     create a superuser:
 
-          ```bash
-          docker-compose exec backend python manage.py createsuperuser --username sathishkumar --email sathishkumar@example.com
-          ```
-          ```bash
-          Enter password: zaqwer321!
-          ```
-          ```bash
-          Enter password (again): zaqwer321!
-          ```
+    - Open a new terminal and run the following command to create a superuser:
+      ```bash
+      docker-compose exec backend python manage.py createsuperuser --username sathishkumar --email sathishkumar@example.com
+      ```
+      Enter password: zaqwer321!
+      ```bash
+      Enter password: zaqwer321!
+      ```
+      ```bash
+      Enter password (again): zaqwer321!
+      ```
 
 go to `http://localhost:3000` in your browser to access the application.
 login with the credentials:
