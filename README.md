@@ -1,6 +1,6 @@
 # Advanced Tasks Management
 
-This is a simple task management application built with React, TypeScript, and Tailwind CSS. It allows users to create, update, and delete tasks, as well as manage their authentication state.
+This is a task management application built with React, TypeScript, and Tailwind CSS. It allows users to create, update, and delete tasks, as well as manage their authentication state.
 
 ## Features
 
