@@ -23,18 +23,26 @@ This is a task management application built with React, TypeScript, and Tailwind
 ## Setup Instructions
 
 1.  Clone the repository:
+    You can clone the repository using either HTTPS or SSH. Choose one of the following commands based on your preference:
+
     using https:
+
     ```bash
     git clone https://github.com/sathishkumar04vsk/task-management-app.git
     ```
+
     using ssh:
+
     ```bash
     git clone git@github.com:sathishkumar04vsk/task-management-app.git
     ```
+
     Navigate to the project directory:
+
     ```
     cd task-management-app
     ```
+
 2.  Docker setup:
 
     - Ensure Docker is installed and running.
