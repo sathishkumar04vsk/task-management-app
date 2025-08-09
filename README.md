@@ -5,8 +5,12 @@ This is a task management application built with React, TypeScript, and Tailwind
 ## Features
 
 - User authentication with JWT tokens
-- Task management (CRUD operations)
+- Role-based access control (admin, task manager, user)
+- User management
+- Task management
+- Real-time updates using WebSockets
 - Responsive design using Tailwind CSS
+- Dockerized for easy deployment
 
 ## Technologies Used
 
